@@ -10,6 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const app = express();
 app.use(express.json());
 
+mongoose.set("strictQuery", false);
 mongoose
   .connect(
     `mongodb+srv://orionx7:i7HxupA9otqHGDWo@testcluster.t3fpgoc.mongodb.net/$TestMinimal?retryWrites=true&w=majority`,
