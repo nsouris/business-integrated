@@ -18,7 +18,6 @@
 .env.test.local
 .env.production.local
 #sensitive files
-.env
 .env-cmdrc.json
 nodemon.json
 
