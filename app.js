@@ -7,6 +7,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export const app = express();
 app.use(express.json());
 
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@testcluster.t3fpgoc.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(
+    (_) => console.log("Connection to Db Succesfull!"),
+    (err) => console.log("Somthing Went Wrong:", err)
+  );
+
+mongoose.connection.on("disconnected", () => {
+  console.log("Disconnected from Db!!!");
+});
+
+mongoose.set("toJSON", { virtuals: true });
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -26,6 +42,29 @@ app.use((req, _res, next) => {
   console.log("Requset queryParams:", req.query);
   console.log("Requset body:", req.body);
   next();
+});
+
+app.patch("/", async (req, res) => {
+  try {
+    const doc = await Chat.findOne({ roomId: req.body.roomId });
+    doc.messages.push(req.body.msg);
+    await doc.save();
+    res.status(202).json("ok");
+  } catch (error) {
+    console.log("🌞", error.message);
+    res.status(517).json(error.message);
+  }
+});
+app.post("/", async (req, res) => {
+  try {
+    const doc = await Chat.findOne({ roomId: req.body.roomId });
+    doc.messages = [];
+    await doc.save();
+    res.status(202).json("ok");
+  } catch (error) {
+    console.log("🌞", error.message);
+    res.status(517).json(error.message);
+  }
 });
 
 app.use(express.static(path.join(__dirname, "build")));
