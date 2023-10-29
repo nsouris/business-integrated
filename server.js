@@ -1,4 +1,3 @@
-import { Server } from "socket.io";
 import debug from "debug";
 
 import { app } from "./app.js";
@@ -9,7 +8,6 @@ app.set("port", port);
 const server = app.listen(app.get("port"), () =>
   console.log(`Express server listening on port:` + server.address().port)
 );
-export const socketIoServer = new Server(server, { cors: { origin: "*" } });
 
 server.on("error", onError);
 server.on("listening", onListening);
