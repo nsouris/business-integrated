@@ -12,7 +12,7 @@ app.use(express.json());
 
 mongoose
   .connect(
-    `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@testcluster.t3fpgoc.mongodb.net/${process.env.MONGODB_NAME}?retryWrites=true&w=majority`,
+    `mongodb+srv://orionx7:i7HxupA9otqHGDWo@testcluster.t3fpgoc.mongodb.net/$TestMinimal?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(
