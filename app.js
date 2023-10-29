@@ -50,10 +50,9 @@ app.use((req, _res, next) => {
 
 app.patch("/", async (req, res) => {
   try {
-    await Chat.create({ roomId: "roomId", messages: ["ale"] });
-    // const doc = await Chat.findOne({ roomId: "minimal" });
-    // doc.messages.push(req.body.msg);
-    // await doc.save();
+    const doc = await Chat.findOne({ roomId: "minimal" });
+    doc.messages.push(req.body.msg);
+    await doc.save();
     res.status(202).json("ok");
   } catch (error) {
     console.log("🌞", error.message);
