@@ -1,3 +1,4 @@
+import "./analytics.js";
 import { Server } from "socket.io";
 import debug from "debug";
 
