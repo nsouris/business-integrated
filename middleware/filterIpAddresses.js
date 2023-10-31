@@ -10,7 +10,14 @@ const vivaWalletIps = [
 
 export const filterIpAddresses = (req, res, next) => {
   try {
-    if (vivaWalletIps.some(ip => ip === req.ip)) {
+    if (
+      vivaWalletIps.some(ip => {
+        console.log('MMMMMM', ip);
+        console.log('222222', req.ip);
+
+        return ip === req.ip;
+      })
+    ) {
       console.log('TRUSTED', req.ip);
       next();
     } else res.send('untrusted');
