@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 import { Chat } from './chat.model.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
+import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
