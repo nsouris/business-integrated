@@ -42,13 +42,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.set('trust proxy', true);
-app.set('trust proxy', ip => {
-  console.log('TRUSTFN', ip);
-  if (ip === '127.0.0.1' || ip === '123.123.123.123')
-    return true; // trusted IPs
-  else return false;
-});
+app.set('trust proxy', true);
 
 app.use((req, _res, next) => {
   console.log('Requset method and url : ', req.method, req.url);
@@ -83,18 +77,23 @@ app.post('/', async (req, res) => {
   }
 });
 
-app.use('/webhook/payment', requestWebhookKey, async (req, res) => {
-  try {
-    if (req.method === 'POST') {
-      console.dir('webhookPOSTPAYMENTINFO', req.body);
-      return res.send({ message: 'ok' });
-    } else {
-      return res.send({ key: res.locals.webHook_key });
+app.use(
+  '/webhook/payment',
+  requestWebhookKey,
+  filterIpAddresses,
+  async (req, res) => {
+    try {
+      if (req.method === 'POST') {
+        console.dir('webhookPOSTPAYMENTINFO', req.body);
+        return res.send({ message: 'ok' });
+      } else {
+        return res.send({ key: res.locals.webHook_key });
+      }
+    } catch (error) {
+      console.log(error.message);
     }
-  } catch (error) {
-    console.log(error.message);
   }
-});
+);
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.use((_req, res, _next) => {
