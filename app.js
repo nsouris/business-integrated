@@ -45,6 +45,7 @@ app.use((req, _res, next) => {
   console.log("Requset method and url : ", req.method, req.url);
   console.log("Requset queryParams:", req.query);
   console.log("Requset body:", req.body);
+  console.log(req.socket.remoteAddress);
   next();
 });
 
