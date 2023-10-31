@@ -42,11 +42,15 @@ app.use((req, res, next) => {
   next();
 });
 
+app.set('trust proxy', true);
+
 app.use((req, _res, next) => {
   console.log('Requset method and url : ', req.method, req.url);
   console.log('Requset queryParams:', req.query);
   console.log('Requset body:', req.body);
-  console.log(req.socket.remoteAddress);
+  console.log('REMOTEADDRESSIP', req.socket.remoteAddress);
+  console.log('HEADERSIP', req.headers['x-forwarded-for']);
+  console.log('IP', req.ip);
   next();
 });
 
