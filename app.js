@@ -42,7 +42,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.set('trust proxy', true);
+// app.set('trust proxy', true);
+app.set('trust proxy', ip => {
+  console.log('TRUSTFN', ip);
+  if (ip === '127.0.0.1' || ip === '123.123.123.123')
+    return true; // trusted IPs
+  else return false;
+});
 
 app.use((req, _res, next) => {
   console.log('Requset method and url : ', req.method, req.url);
