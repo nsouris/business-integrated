@@ -1,33 +1,11 @@
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import mongoose from 'mongoose';
-
-import { Chat } from './chat.model.js';
-import { requestWebhookKey } from './middleware/requestWebhookKey.js';
-import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export const app = express();
 app.use(express.json());
-
-mongoose.set('strictQuery', false);
-mongoose
-  .connect(
-    `mongodb+srv://orionx7:i7HxupA9otqHGDWo@testcluster.t3fpgoc.mongodb.net/TestMinimal?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
-  .then(
-    _ => console.log('Connection to Db Succesfull!'),
-    err => console.log('Somthing Went Wrong:', err)
-  );
-
-mongoose.connection.on('disconnected', () => {
-  console.log('Disconnected from Db!!!');
-});
-
-mongoose.set('toJSON', { virtuals: true });
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -54,47 +32,6 @@ app.use((req, _res, next) => {
   console.log('IP', req.ip);
   next();
 });
-
-app.patch('/', async (req, res) => {
-  try {
-    const doc = await Chat.findOne({ roomId: 'minimal' });
-    doc.messages.push(req.body.msg);
-    await doc.save();
-    res.status(202).json('ok');
-  } catch (error) {
-    console.log('🌞', error.message);
-    res.status(517).json(error.message);
-  }
-});
-app.post('/', async (req, res) => {
-  try {
-    const doc = await Chat.findOne({ roomId: 'minimal' });
-    doc.messages = [];
-    await doc.save();
-    res.status(202).json('ok');
-  } catch (error) {
-    console.log('🌞', error.message);
-    res.status(517).json(error.message);
-  }
-});
-
-app.use(
-  '/webhook/payment',
-  requestWebhookKey,
-  filterIpAddresses,
-  async (req, res) => {
-    try {
-      if (req.method === 'POST') {
-        console.dir('webhookPOSTPAYMENTINFO', req.body);
-        return res.send({ message: 'ok' });
-      } else {
-        return res.send({ key: res.locals.webHook_key });
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-);
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.use((_req, res, _next) => {
