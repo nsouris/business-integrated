@@ -33,7 +33,7 @@ app.use(
   async (req, res) => {
     try {
       if (req.method === 'POST') {
-        console.dir('webhookPOSTPAYMENTINFO', req.body);
+        console.dir('webhookPOSTPAYMENTINFO');
         return res.send({ message: 'ok' });
       } else {
         return res.send({ key: res.locals.webHook_key });
@@ -43,3 +43,20 @@ app.use(
     }
   }
 );
+
+async function withTransaction(req, res, callback) {
+  try {
+    const session = await Chat.startSession();
+    await session.withTransaction(async () => {
+      await callback(req.body, res.locals, session);
+    });
+    session.endSession();
+    res.send({
+      token: res.locals.token,
+      username: req.body.username || res.locals.playerName,
+    });
+  } catch (error) {
+    console.log(`🌞 ${callback?.name} controler`, error.message);
+    res.status(401).json(error.message);
+  }
+}
