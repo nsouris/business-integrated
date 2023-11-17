@@ -1,6 +1,7 @@
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { Chat } from './chat.model.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,6 +32,30 @@ app.use((req, _res, next) => {
   // console.log('HEADERSIP', req.headers['x-forwarded-for']);
   // console.log('IP', req.ip);
   next();
+});
+
+app.patch('/', async (req, res) => {
+  try {
+    if (req.body.msg === 'F') throw new Error('wtF!@!');
+    const doc = await Chat.findOne({ roomId: 'minimal' });
+    doc.messages.push(req.body.msg);
+    await doc.save();
+    res.status(202).json('ok');
+  } catch (error) {
+    console.log('🌞', error.message);
+    res.status(517).json(error.message);
+  }
+});
+app.post('/', async (req, res) => {
+  try {
+    const doc = await Chat.findOne({ roomId: 'minimal' });
+    doc.messages = [];
+    await doc.save();
+    res.status(202).json('ok');
+  } catch (error) {
+    console.log('🌞', error.message);
+    res.status(517).json(error.message);
+  }
 });
 
 app.use(express.static(path.join(__dirname, 'build')));

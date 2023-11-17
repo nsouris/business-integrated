@@ -3,6 +3,7 @@ import { Server } from 'socket.io';
 import debug from 'debug';
 
 import { app } from './app.js';
+import './controllers.js';
 import './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
