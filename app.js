@@ -35,6 +35,7 @@ app.use((req, _res, next) => {
 });
 
 app.patch('/', async (req, res) => {
+  if (req.body.msg === 'Z') throw new Error('🌞UnCaught wtF!@!🌞');
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     const doc = await Chat.findOne({ roomId: 'minimal' });
