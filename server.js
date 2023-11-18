@@ -5,6 +5,8 @@ import debug from 'debug';
 import { app } from './app.js';
 import './controllers.js';
 import './mongoDb.js';
+import { createAdapter } from '@socket.io/mongo-adapter';
+import { mongoCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
@@ -14,19 +16,15 @@ const server = app.listen(app.get('port'), () =>
 );
 export const socketIoServer = new Server(server, {
   connectionStateRecovery: {
-    // the backup duration of the sessions and the packets
     maxDisconnectionDuration: 2 * 60 * 1000,
-    skipMiddlewares: true,
   },
   cors: { origin: '*' },
-  // pingInterval: 5000,
-  // pingTimeout: 5000,
 });
-
+socketIoServer.adapter(
+  createAdapter(mongoCollection, { addCreatedAtField: true })
+);
 socketIoServer.on('connection', socket => {
   console.log('SOCKET CONNECTED', socket.id);
-
-  socket.on('postMessage', msg => console.log('@@@@@@@@@@@@', msg));
 });
 
 server.on('error', onError);

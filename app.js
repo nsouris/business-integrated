@@ -1,7 +1,7 @@
+import axios from 'axios';
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { Chat } from './chat.model.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -34,17 +34,17 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.patch('/', (req, res, next) => {
-  if (req.body.msg === 'Q') throw new Error('🌞UnCaught wtF!@!🌞');
-  next();
-});
 app.patch('/', async (req, res) => {
-  if (req.body.msg === 'Z') throw new Error('🌞UnCaught wtF!@!🌞');
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
-    const doc = await Chat.findOne({ roomId: 'minimal' });
-    doc.messages.push(req.body.msg);
-    await doc.save();
+    await axios({
+      method: 'patch',
+      url: 'http://localhost:1729',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data: req.body,
+    });
     res.status(202).json('ok');
   } catch (error) {
     console.log('🌞', error.message);
@@ -53,9 +53,13 @@ app.patch('/', async (req, res) => {
 });
 app.post('/', async (req, res) => {
   try {
-    const doc = await Chat.findOne({ roomId: 'minimal' });
-    doc.messages = [];
-    await doc.save();
+    await axios({
+      method: 'post',
+      url: 'http://localhost:1729',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     res.status(202).json('ok');
   } catch (error) {
     console.log('🌞', error.message);
