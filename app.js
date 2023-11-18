@@ -34,8 +34,9 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.patch('/', (req, res) => {
+app.patch('/', (req, res, next) => {
   if (req.body.msg === 'Q') throw new Error('🌞UnCaught wtF!@!🌞');
+  next();
 });
 app.patch('/', async (req, res) => {
   if (req.body.msg === 'Z') throw new Error('🌞UnCaught wtF!@!🌞');
