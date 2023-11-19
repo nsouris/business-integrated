@@ -39,7 +39,7 @@ app.patch('/', async (req, res) => {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     await axios({
       method: 'patch',
-      url: 'http://localhost:1729',
+      url: 'https://BackendPrivateApi.azurewebsites.net',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -55,7 +55,7 @@ app.post('/', async (req, res) => {
   try {
     await axios({
       method: 'post',
-      url: 'http://localhost:1729',
+      url: 'https://BackendPrivateApi.azurewebsites.net',
       headers: {
         'Content-Type': 'application/json',
       },
