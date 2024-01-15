@@ -47,7 +47,7 @@ app.patch('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    console.log('🌞', error.message);
+    console.log('🌞jj', error.message);
     res.status(517).json(error.message);
   }
 });
