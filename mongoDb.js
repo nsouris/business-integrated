@@ -7,7 +7,7 @@ async function connectDb() {
   try {
     mongoose.set('strictQuery', false); // if true only the fields that are specified in the Schema will be saved
     await mongoose.connect(
-      `mongodb+srv://primitivo:7ZuIFwncwAlka6oX@cluster0.qyvtcbt.mongodb.net/test?retryWrites=true&w=majority`,
+      `mongodb+srv://primitivo:7ZuIFwncwAlka6oX@cluster0.qyvtcbt.mongodb.net/${DB}?retryWrites=true&w=majority`,
       { useNewUrlParser: true, useUnifiedTopology: true }
     );
     console.log('Connection to MongoDB Succesfull!');
