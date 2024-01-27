@@ -2,8 +2,8 @@ import axios from 'axios';
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { filterIpAddresses } from './middleware/filterIpAddresses';
-import { requestWebhookKey } from './middleware/requestWebhookKey';
+import { filterIpAddresses } from './middleware/filterIpAddresses.js';
+import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
