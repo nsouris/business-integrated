@@ -2,6 +2,8 @@ import axios from 'axios';
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { filterIpAddresses } from './middleware/filterIpAddresses';
+import { requestWebhookKey } from './middleware/requestWebhookKey';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -51,6 +53,26 @@ app.patch('/', async (req, res) => {
     res.status(517).json(error.message);
   }
 });
+
+app.use(
+  '/webhook/payment',
+  requestWebhookKey,
+  filterIpAddresses,
+  async (req, res) => {
+    try {
+      if (req.method === 'POST') {
+        console.log('webhookPOSTPAYMENTINFO');
+        return res.send({ message: 'ok' });
+      } else {
+        console.log('KEY:', res.locals.webHook_key);
+        return res.send({ key: res.locals.webHook_key });
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+);
+
 app.post('/', async (req, res) => {
   try {
     await axios({
