@@ -3,7 +3,6 @@ import { Server } from 'socket.io';
 import debug from 'debug';
 
 import { app } from './app.js';
-import './controllers.js';
 import './mongoDb.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import { mongoCollection } from './mongoDb.js';
