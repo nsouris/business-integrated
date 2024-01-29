@@ -15,6 +15,7 @@ export const app = express();
 app.use(express.json());
 
 const hostName = os.hostname();
+const pid = process.pid;
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -36,7 +37,8 @@ app.use((req, _res, next) => {
   console.log('Requset method and url : ', req.method, req.url);
   // console.log('Requset queryParams:', req.query);
   console.log('Requset body:', req.body);
-  console.log(hostName);
+  console.log('hostName', hostName);
+  console.log('id', pid);
   // console.log('REMOTEADDRESSIP', req.socket.remoteAddress);
   // console.log('HEADERSIP', req.headers['x-forwarded-for']);
   // console.log('IP', req.ip);
