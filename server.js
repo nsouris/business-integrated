@@ -5,7 +5,7 @@ import debug from 'debug';
 import { app } from './app.js';
 import './mongoDb.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
-import { mongoCollection } from './mongoDb.js';
+import { adapterCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
@@ -20,7 +20,7 @@ export const socketIoServer = new Server(server, {
   cors: { origin: '*' },
 });
 socketIoServer.adapter(
-  createAdapter(mongoCollection, { addCreatedAtField: true })
+  createAdapter(adapterCollection, { addCreatedAtField: true })
 );
 socketIoServer.on('connection', socket => {
   console.log('SOCKET CONNECTED', socket.id);

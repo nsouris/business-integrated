@@ -17,8 +17,8 @@ async function connectDb() {
 }
 await connectDb();
 
-export const mongoCollection = mongoose.connection.collection(COLLECTION);
-await mongoCollection.createIndex(
+export const adapterCollection = mongoose.connection.collection(COLLECTION);
+await adapterCollection.createIndex(
   { createdAt: 1 },
   { expireAfterSeconds: 60, background: true }
 );

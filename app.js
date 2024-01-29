@@ -7,6 +7,9 @@ import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// const backendUrl = 'http://localhost:2917';
+const backendUrl = 'https://BackendPrivateApi.azurewebsites.net';
+
 export const app = express();
 app.use(express.json());
 
@@ -41,7 +44,7 @@ app.patch('/', async (req, res) => {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     await axios({
       method: 'patch',
-      url: 'https://BackendPrivateApi.azurewebsites.net',
+      url: backendUrl,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -49,7 +52,7 @@ app.patch('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    console.log('🌞jj', error.message);
+    console.log('🌞 patch error', error.message);
     res.status(517).json(error.message);
   }
 });
@@ -77,7 +80,7 @@ app.post('/', async (req, res) => {
   try {
     await axios({
       method: 'post',
-      url: 'https://BackendPrivateApi.azurewebsites.net',
+      url: backendUrl,
       headers: {
         'Content-Type': 'application/json',
       },
