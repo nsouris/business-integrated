@@ -42,6 +42,10 @@ app.use((req, _res, next) => {
 app.patch('/', async (req, res) => {
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
+    if (req.body.roomId === 'cpuLoad') {
+      mySlowFunction(req.body.load); // higher number => more iterations => slower
+      return res.status(202).json('ok');
+    }
     await axios({
       method: 'patch',
       url: backendUrl,
@@ -96,3 +100,13 @@ app.use(express.static(path.join(__dirname, 'build')));
 app.use((_req, res, _next) => {
   res.sendFile(path.join(__dirname, './build', 'index.html'));
 });
+
+function mySlowFunction(baseNumber) {
+  console.time('mySlowFunction');
+  let result = 0;
+  for (var i = Math.pow(baseNumber, 7); i >= 0; i--) {
+    result += Math.atan(i) * Math.tan(i);
+  }
+  console.timeEnd('mySlowFunction');
+  console.log(result);
+}
