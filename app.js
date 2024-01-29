@@ -4,6 +4,7 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
+import os from 'os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -12,6 +13,8 @@ const backendUrl = 'https://BackendPrivateApi.azurewebsites.net';
 
 export const app = express();
 app.use(express.json());
+
+const hostName = os.hostname();
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +36,7 @@ app.use((req, _res, next) => {
   console.log('Requset method and url : ', req.method, req.url);
   // console.log('Requset queryParams:', req.query);
   console.log('Requset body:', req.body);
+  console.log(hostName);
   // console.log('REMOTEADDRESSIP', req.socket.remoteAddress);
   // console.log('HEADERSIP', req.headers['x-forwarded-for']);
   // console.log('IP', req.ip);
