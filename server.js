@@ -11,7 +11,7 @@ const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
 
 const server = app.listen(app.get('port'), () =>
-  console.log(`Express server listening on port:` + server.address().port)
+  console.log(`🤙 Express server listening on port:` + server.address().port)
 );
 export const socketIoServer = new Server(server, {
   connectionStateRecovery: {
@@ -23,7 +23,7 @@ socketIoServer.adapter(
   createAdapter(adapterCollection, { addCreatedAtField: true })
 );
 socketIoServer.on('connection', socket => {
-  console.log('SOCKET CONNECTED', socket.id);
+  console.log('socket connected with id:', socket.id);
 });
 
 server.on('error', onError);
