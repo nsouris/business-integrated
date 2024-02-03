@@ -65,6 +65,8 @@ app.use((req, _res, next) => {
 });
 
 app.patch('/', async (req, res) => {
+  const appInsights = app.get('appInsights');
+  appInsights.trackMetric({ name: 'Node', value: 500 });
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     if (req.body.roomId === 'cpuLoad') {

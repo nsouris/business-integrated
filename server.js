@@ -22,9 +22,20 @@ export const socketIoServer = new Server(server, {
 socketIoServer.adapter(
   createAdapter(adapterCollection, { addCreatedAtField: true })
 );
-socketIoServer.on('connection', socket => {
+
+socketIoServer.on('connection', socketListen);
+function socketListen(socket) {
   console.log('socket connected with id:', socket.id);
-});
+  console.log('socket protocol:', socket.conn.transport.name);
+
+  socket.on('postMessage', ({ gameId, playerName, message }) =>
+    socketIoServer.in(gameId).emit('newMessage', { playerName, message })
+  );
+
+  socket.on('disconnecting', async reason => {
+    console.log(`disconnecting ${socket.id} due to :${reason}`);
+  });
+}
 
 server.on('error', onError);
 server.on('listening', onListening);
