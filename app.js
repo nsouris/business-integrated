@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 import os from 'os';
+import { appLogger } from './server.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -53,14 +54,14 @@ app.use((req, res, next) => {
 app.set('trust proxy', true);
 
 app.use((req, _res, next) => {
-  console.log('Requset method and url : ', req.method, req.url);
-  // console.log('Requset queryParams:', req.query);
-  console.log('Requset body:', req.body);
-  console.log('hostName', hostName);
-  console.log('id', pid);
-  // console.log('REMOTEADDRESSIP', req.socket.remoteAddress);
-  // console.log('HEADERSIP', req.headers['x-forwarded-for']);
-  // console.log('IP', req.ip);
+  appLogger('Requset method and url : ', req.method, req.url);
+  // appLogger('Requset queryParams:', req.query);
+  appLogger('Requset body:', req.body);
+  appLogger('hostName', hostName);
+  appLogger('id', pid);
+  // appLogger('REMOTEADDRESSIP', req.socket.remoteAddress);
+  // appLogger('HEADERSIP', req.headers['x-forwarded-for']);
+  // appLogger('IP', req.ip);
   next();
 });
 
@@ -91,7 +92,7 @@ app.patch('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    console.log('🌞 patch error', error.message);
+    appLogger('🌞 patch error', error.message);
     res.status(517).json(error.message);
   }
 });
@@ -103,14 +104,14 @@ app.use(
   async (req, res) => {
     try {
       if (req.method === 'POST') {
-        console.log('webhookPOSTPAYMENTINFO');
+        appLogger('webhookPOSTPAYMENTINFO');
         return res.send({ message: 'ok' });
       } else {
-        console.log('KEY:', res.locals.webHook_key);
+        appLogger('KEY:', res.locals.webHook_key);
         return res.send({ key: res.locals.webHook_key });
       }
     } catch (error) {
-      console.log(error.message);
+      appLogger(error.message);
     }
   }
 );
@@ -126,7 +127,7 @@ app.post('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    console.log('🌞', error.message);
+    appLogger('🌞', error.message);
     res.status(517).json(error.message);
   }
 });
@@ -143,5 +144,5 @@ function mySlowFunction(baseNumber) {
     result += Math.atan(i) * Math.tan(i);
   }
   console.timeEnd('mySlowFunction');
-  console.log(result);
+  appLogger(result);
 }

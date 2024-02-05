@@ -9,9 +9,10 @@ import { adapterCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
+export const appLogger = debug('frontend');
 
 const server = app.listen(app.get('port'), () =>
-  console.log(`🤙 Express server listening on port:` + server.address().port)
+  appLogger(`🤙 Express server listening on port:` + server.address().port)
 );
 export const socketIoServer = new Server(server, {
   connectionStateRecovery: {
@@ -25,15 +26,15 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
-  console.log('socket connected with id:', socket.id);
-  console.log('socket protocol:', socket.conn.transport.name);
+  appLogger('socket connected with id:', socket.id);
+  appLogger('socket protocol:', socket.conn.transport.name);
 
   socket.on('postMessage', ({ gameId, playerName, message }) =>
     socketIoServer.in(gameId).emit('newMessage', { playerName, message })
   );
 
   socket.on('disconnecting', async reason => {
-    console.log(`disconnecting ${socket.id} due to :${reason}`);
+    appLogger(`disconnecting ${socket.id} due to :${reason}`);
   });
 }
 

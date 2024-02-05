@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { appLogger } from '../server.js';
 
 export const requestWebhookKey = async (_req, res, next) => {
   try {
@@ -14,10 +15,10 @@ export const requestWebhookKey = async (_req, res, next) => {
       },
     });
     res.locals.webHook_key = response.data.Key;
-    console.log('webhookMIDDLEWARE', response.data.Key);
+    appLogger('webhookMIDDLEWARE', response.data.Key);
     next();
   } catch (error) {
-    console.log('🌞 requestWebhookKey', error.message);
+    appLogger('🌞 requestWebhookKey', error.message);
     res.send(error.message);
   }
 };

@@ -1,16 +1,17 @@
+import debug from 'debug';
 import mongoose from 'mongoose';
 
 const DB = 'Socket';
 const COLLECTION = 'socket.io-adapter-events';
-
+const appLogger = debug('frontend');
 try {
   mongoose.set('strictQuery', false); // if true only the fields that are specified in the Schema will be saved
   await mongoose.connect(
     `mongodb+srv://primitivo:7ZuIFwncwAlka6oX@cluster0.qyvtcbt.mongodb.net/${DB}?retryWrites=true&w=majority`
   );
-  console.log('🌎 Connection to AdapterDb Succesfull! 🌎');
+  appLogger('🌎 Connection to AdapterDb Succesfull! 🌎');
 } catch (err) {
-  console.log('🌞 Connection to AdapterDb failed', err);
+  appLogger('🌞 Connection to AdapterDb failed', err);
 }
 
 export const defaultConnection = mongoose.connection;
@@ -22,12 +23,12 @@ await adapterCollection.createIndex(
 mongoose.set('toJSON', { virtuals: true });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('Disconnected from Db!!!');
+  appLogger('Disconnected from Db!!!');
 });
 
 defaultConnection.on('error', err => {
-  console.log('🌞 Db error', err);
+  appLogger('🌞 Db error', err);
 });
 defaultConnection.on('disconnected', () => {
-  console.log('🌞 Disconnected from Db!!!');
+  appLogger('🌞 Disconnected from Db!!!');
 });

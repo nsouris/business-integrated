@@ -1,3 +1,5 @@
+import { appLogger } from '../server.js';
+
 const vivaWalletIps = [
   '20.50.240.57',
   '40.74.20.78',
@@ -11,11 +13,11 @@ const vivaWalletIps = [
 export const filterIpAddresses = (req, res, next) => {
   try {
     if (vivaWalletIps.some(ip => req.ip.includes(ip))) {
-      console.log('TRUSTED', req.ip);
+      appLogger('TRUSTED', req.ip);
       next();
     } else res.send('untrusted');
   } catch (error) {
-    console.log('🌞 filterIpAddresses', error.message);
+    appLogger('🌞 filterIpAddresses', error.message);
     res.send('internal server error');
   }
 };
