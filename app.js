@@ -63,9 +63,14 @@ app.use((req, _res, next) => {
   // console.log('IP', req.ip);
   next();
 });
-setTimeout(() => {
-  throw new Error('lets restart');
-}, 5000);
+
+app.patch('/', (req, res, next) => {
+  if (req.body.msg === 'F')
+    setTimeout(() => {
+      throw new Error('lets restart');
+    }, 5000);
+  next();
+});
 
 app.patch('/', async (req, res) => {
   const appInsights = app.get('appInsights');
