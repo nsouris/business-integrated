@@ -8,8 +8,9 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "start-dev": "set DEBUG=frontend & nodemon server.js",
+    "start:dev": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.development.local",
+    "start:prod": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.production.local",
+    "start": "pm2 start server.js --no-daemon",
     "test": "node test.js"
   },
   "dependencies": {
@@ -23,6 +24,7 @@
     "socket.io": "^4.5.4"
   },
   "devDependencies": {
-    "eslint": "^8.53.0"
+    "eslint": "^8.53.0",
+    "dotenv": "^16.4.1"
   }
 }
