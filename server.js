@@ -5,7 +5,7 @@ import debug from 'debug';
 import { app } from './app.js';
 import './mongoDb.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
-BACKEND_URLimport os from 'os';
+import os from 'os';
 import { adapterCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
