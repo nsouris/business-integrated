@@ -5,14 +5,20 @@ import debug from 'debug';
 import { app } from './app.js';
 import './mongoDb.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
+BACKEND_URLimport os from 'os';
 import { adapterCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
 export const appLogger = debug('frontend');
+const hostName = os.hostname();
+const pid = process.pid;
 
 const server = app.listen(app.get('port'), () =>
-  appLogger(`🤙 Express server listening on port:` + server.address().port)
+  appLogger(
+    `🤙 Express ${hostName}, id: ${pid} listening on port:` +
+      server.address().port
+  )
 );
 export const socketIoServer = new Server(server, {
   connectionStateRecovery: {

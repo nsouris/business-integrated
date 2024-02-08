@@ -9,7 +9,6 @@
   "main": "server.js",
   "scripts": {
     "start:dev": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.development.local",
-    "start:prod": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.production.local",
     "start": "pm2 start server.js --no-daemon",
     "test": "node test.js"
   },

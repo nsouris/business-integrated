@@ -9,8 +9,7 @@ import { appLogger } from './server.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// const backendUrl = 'http://localhost:2917';
-const backendUrl = 'https://BackendPrivateApi.azurewebsites.net';
+const backendUrl = process.env.BACKEND_URL;
 
 export const app = express();
 app.use(express.json());
