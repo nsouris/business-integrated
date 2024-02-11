@@ -6,6 +6,7 @@ import { app } from './app.js';
 import './mongoDb.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import os from 'os';
+import appInsightsClient from './analytics.js';
 import { adapterCollection } from './mongoDb.js';
 
 const port = normalizePort(process.env.PORT || '3101');
@@ -14,12 +15,16 @@ export const appLogger = debug('frontend');
 const hostName = os.hostname();
 const pid = process.pid;
 
-const server = app.listen(app.get('port'), () =>
-  appLogger(
-    `🤙 Express ${hostName}, id: ${pid} listening on port:` +
-      server.address().port
-  )
-);
+export const server = app.listen(port, () => {
+  const info = `🤙 Express on ${hostName}, pid: ${pid}, listening on port:${
+    server.address().port
+  }`;
+  appLogger(info);
+  appInsightsClient.trackEvent({
+    name: '👕' + 'FRONTEND SERVER STARTED ID: ' + pid,
+    properties: { info },
+  });
+});
 export const socketIoServer = new Server(server, {
   connectionStateRecovery: {
     maxDisconnectionDuration: 2 * 60 * 1000,
@@ -32,15 +37,22 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
-  appLogger('socket connected with id:', socket.id);
-  appLogger('socket protocol:', socket.conn.transport.name);
+  appLogger(
+    `socket connected with id: ${socket.id} connected to  PID: ${pid} `
+  );
+  appInsightsClient.trackEvent({
+    name: `socket connected with id: ${socket.id} connected to  PID: ${pid} `,
+  });
 
   socket.on('postMessage', ({ gameId, playerName, message }) =>
     socketIoServer.in(gameId).emit('newMessage', { playerName, message })
   );
 
   socket.on('disconnecting', async reason => {
-    appLogger(`disconnecting ${socket.id} due to :${reason}`);
+    appLogger(`🤙 disconnecting ${socket.id} due to :${reason}`);
+    appInsightsClient.trackEvent({
+      name: `🤙 disconnecting socket ${socket.id} from PID: ${pid} due to :${reason}`,
+    });
   });
 }
 
