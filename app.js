@@ -139,7 +139,7 @@ app.post('/', async (req, res) => {
 });
 
 app.use(express.static(path.join(__dirname, 'build')));
-app.use((_req, res, _next) => {
+app.use((_req, res) => {
   res.sendFile(path.join(__dirname, './build', 'index.html'));
 });
 
