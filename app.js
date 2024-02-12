@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 import os from 'os';
+import appInsightsClient from './analytics.js';
 import { appLogger } from './server.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -73,6 +74,10 @@ app.patch('/', (req, res, next) => {
 });
 
 app.patch('/', async (req, res) => {
+  appInsightsClient.trackEvent({
+    name: `🌞🌞🌞🌞🌞🌞🌞`,
+    properties: { backend: '🔐' + hostName, pid },
+  });
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     if (req.body.roomId === 'cpuLoad') {
@@ -114,6 +119,10 @@ app.use(
 );
 
 app.post('/', async (req, res) => {
+  appInsightsClient.trackEvent({
+    name: `🔐🔐🔐🔐🔐🔐🔐🔐🔐`,
+    properties: { backend: '🔐' + hostName, pid },
+  });
   try {
     await axios({
       method: 'post',
