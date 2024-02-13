@@ -41,7 +41,11 @@ function socketListen(socket) {
     `socket connected with id: ${socket.id} connected to  PID: ${pid} `
   );
   appInsightsClient.trackEvent({
-    name: `socket connected with id: ${socket.id} connected to  PID: ${pid} `,
+    name: `🤙 Connected socket`,
+    properties: {
+      socketId: socket.id,
+      pid: pid,
+    },
   });
 
   socket.on('postMessage', ({ gameId, playerName, message }) =>
@@ -51,7 +55,12 @@ function socketListen(socket) {
   socket.on('disconnecting', async reason => {
     appLogger(`🤙 disconnecting ${socket.id} due to :${reason}`);
     appInsightsClient.trackEvent({
-      name: `🤙 disconnecting socket ${socket.id} from PID: ${pid} due to :${reason}`,
+      name: `🤙 disconnecting socket`,
+      properties: {
+        socketId: socket.id,
+        pid: pid,
+        reason,
+      },
     });
   });
 }
