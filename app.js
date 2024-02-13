@@ -18,8 +18,11 @@ app.use(express.json());
 
 const hostName = os.hostname();
 const pid = process.pid;
+const HEADERS = {
+  ale: 'https://westeurope-5.in.applicationinsights.azure.com/v2/track',
+};
 
-// app.use(helmet());
+app.use(helmet());
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -55,7 +58,7 @@ app.patch('/', (req, res, next) => {
     }, 5000);
   next();
 });
-
+console.log(backendUrl);
 app.patch('/', async (req, res) => {
   appInsightsClient.trackEvent({
     name: `🌞🌞🌞🌞🌞🌞🌞`,
