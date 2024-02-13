@@ -7,7 +7,6 @@ import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 import os from 'os';
 import appInsightsClient from './analytics.js';
 import { appLogger } from './server.js';
-import helmet from 'helmet';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -19,19 +18,26 @@ app.use(express.json());
 const hostName = os.hostname();
 const pid = process.pid;
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        'connect-src': [
-          "'self'",
-          'https://westeurope-5.in.applicationinsights.azure.com/v2/track',
-        ],
-      },
-    },
-  })
-);
-app.use((req, res, next) => {
+const HEADERS = {
+  'Content-Security-Policy':
+    "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+  'Origin-Agent-Cluster': '?1',
+  'Referrer-Policy': 'no-referrer',
+  'Strict-Transport-Security': 'max-age=15552000; includeSubDomains',
+  'X-Content-Type-Options': 'nosniff',
+  'X-DNS-Prefetch-Control': 'off',
+  'X-Download-Options': 'noopen',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'X-XSS-Protection': '0',
+};
+app.use((_req, res, next) => {
+  res.set(HEADERS);
+  next();
+});
+app.use((_req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -39,23 +45,21 @@ app.use((req, res, next) => {
   );
   res.setHeader(
     'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    'GET, POST, PUT, PATCH, OPTIONS'
   );
   res.setHeader('Access-Control-Expose-Headers', '*');
   next();
 });
 
-app.set('trust proxy', true);
+app.set('trust proxy', true); // to get the req.ip
+app.disable('x-powered-by'); // for hiding being an express app
 
 app.use((req, _res, next) => {
   appLogger('Requset method and url : ', req.method, req.url);
-  // appLogger('Requset queryParams:', req.query);
   appLogger('Requset body:', req.body);
-  appLogger('hostName', hostName);
+  appLogger('Client ip:', req.ip);
+  appLogger('hosstName', hostName);
   appLogger('id', pid);
-  // appLogger('REMOTEADDRESSIP', req.socket.remoteAddress);
-  // appLogger('HEADERSIP', req.headers['x-forwarded-for']);
-  // appLogger('IP', req.ip);
   next();
 });
 
