@@ -21,8 +21,8 @@ export const server = app.listen(port, () => {
   }`;
   appLogger(info);
   appInsightsClient.trackEvent({
-    name: '👕' + 'FRONTEND SERVER STARTED ID: ' + pid,
-    properties: { info },
+    name: '👕' + 'FRONTEND SERVER STARTED',
+    properties: { hostName, pid },
   });
 });
 export const socketIoServer = new Server(server, {
@@ -41,7 +41,7 @@ function socketListen(socket) {
     `socket connected with id: ${socket.id} connected to  PID: ${pid} `
   );
   appInsightsClient.trackEvent({
-    name: `🤙 Connected socket`,
+    name: `🤙 Socket connected`,
     properties: {
       socketId: socket.id,
       pid: pid,
