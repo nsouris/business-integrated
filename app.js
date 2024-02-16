@@ -7,6 +7,7 @@ import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 import os from 'os';
 import appInsightsClient from './analytics.js';
 import { appLogger } from './server.js';
+import { handler } from './errorHandler.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -71,7 +72,7 @@ app.patch('/', (req, res, next) => {
   next();
 });
 
-app.patch('/', async (req, res) => {
+app.patch('/', async (req, res, next) => {
   appInsightsClient.trackEvent({
     name: `🌞🌞🌞frontend patch controler`,
     properties: { frontend: '🔐' + hostName, pid, requestIp: req.ip },
@@ -92,8 +93,7 @@ app.patch('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    appLogger('🌞 patch error', error.message);
-    res.status(517).json(error.message);
+    next(error);
   }
 });
 
@@ -101,7 +101,7 @@ app.use(
   '/webhook/payment',
   requestWebhookKey,
   filterIpAddresses,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       if (req.method === 'POST') {
         appLogger('webhookPOSTPAYMENTINFO');
@@ -111,12 +111,12 @@ app.use(
         return res.send({ key: res.locals.webHook_key });
       }
     } catch (error) {
-      appLogger(error.message);
+      next(error);
     }
   }
 );
 
-app.post('/', async (req, res) => {
+app.post('/', async (req, res, next) => {
   try {
     await axios({
       method: 'post',
@@ -127,14 +127,17 @@ app.post('/', async (req, res) => {
     });
     res.status(202).json('ok');
   } catch (error) {
-    appLogger('🌞', error.message);
-    res.status(517).json(error.message);
+    next(error);
   }
 });
 
 app.use(express.static(path.join(__dirname, 'build')));
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, './build', 'index.html'));
+});
+// eslint-disable-next-line no-unused-vars
+app.use(async (err, req, res, next, _next) => {
+  await handler.handleError(err, req, res, next);
 });
 
 function mySlowFunction(baseNumber) {

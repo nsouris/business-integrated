@@ -18,7 +18,6 @@ export const requestWebhookKey = async (_req, res, next) => {
     appLogger('webhookMIDDLEWARE', response.data.Key);
     next();
   } catch (error) {
-    appLogger('🌞 requestWebhookKey', error.message);
-    res.send(error.message);
+    next(error);
   }
 };

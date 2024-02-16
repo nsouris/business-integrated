@@ -17,7 +17,6 @@ export const filterIpAddresses = (req, res, next) => {
       next();
     } else res.send('untrusted');
   } catch (error) {
-    appLogger('🌞 filterIpAddresses', error.message);
-    res.send('internal server error');
+    next(error);
   }
 };

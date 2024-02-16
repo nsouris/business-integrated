@@ -1,6 +1,10 @@
 import debug from 'debug';
 import mongoose from 'mongoose';
+import appInsightsClient from './analytics.js';
+import os from 'os';
+import { handler } from './errorHandler';
 
+const hostName = os.hostname();
 const DB = 'Socket';
 const COLLECTION = 'socket.io-adapter-events';
 const appLogger = debug('frontend');
@@ -10,8 +14,12 @@ try {
     `mongodb+srv://primitivo:7ZuIFwncwAlka6oX@cluster0.qyvtcbt.mongodb.net/${DB}?retryWrites=true&w=majority`
   );
   appLogger('🌎 Connection to AdapterDb Succesfull! 🌎');
-} catch (err) {
-  appLogger('🌞 Connection to AdapterDb failed', err);
+  appInsightsClient.trackEvent({
+    name: '🌎 Connection to AdapterDb Succesfull! 🌎',
+    properties: { backend: hostName, pid: process.pid },
+  });
+} catch (error) {
+  handler.handleError(error);
   process.exit(0);
 }
 
@@ -23,13 +31,17 @@ await adapterCollection.createIndex(
 );
 mongoose.set('toJSON', { virtuals: true });
 
-mongoose.connection.on('disconnected', () => {
-  appLogger('Disconnected from Db!!!');
-});
-
 defaultConnection.on('error', err => {
-  appLogger('🌞 Db error', err);
+  handler.handleError(err);
+  process.exit(0);
 });
 defaultConnection.on('disconnected', () => {
-  appLogger('🌞 Disconnected from Db!!!');
+  appLogger(`🌞 Disconnected from AdapterDb`);
+  appInsightsClient.trackEvent({
+    name: `🌞 Disconnected from MainDb`,
+    properties: {
+      frontEnd: hostName,
+      pid: process.pid,
+    },
+  });
 });
