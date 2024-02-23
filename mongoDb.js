@@ -2,7 +2,7 @@ import debug from 'debug';
 import mongoose from 'mongoose';
 import appInsightsClient from './analytics.js';
 import os from 'os';
-import { handler } from './errorHandler';
+import { handler } from './errorHandler.js';
 
 const hostName = os.hostname();
 const DB = 'Socket';

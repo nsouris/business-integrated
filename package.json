@@ -9,6 +9,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.development.local",
+    "start:dev": "set DEBUG=frontend & pm2 -i 4 start server.js --no-daemon",
     "test": "node test.js"
   },
   "dependencies": {

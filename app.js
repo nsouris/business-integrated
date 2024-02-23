@@ -11,7 +11,7 @@ import { handler } from './errorHandler.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const backendUrl = process.env.BACKEND_URL;
+const backendUrl = 'http://localhost:2917';
 
 export const app = express();
 app.use(express.json());
