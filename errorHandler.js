@@ -16,7 +16,7 @@ export class AppError extends Error {
 class ErrorHandler {
   constructor() {
     this.handleError = async (error, req = {}, res = {}) => {
-      appLogger(`🌞 ${req.originalUrl} controler error`, error.message);
+      appLogger(`🌞 ${req.originalUrl} error`, error.message);
       appInsightsClient.trackException({
         exception: error,
         properties: {

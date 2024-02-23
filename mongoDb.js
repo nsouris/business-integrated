@@ -11,7 +11,7 @@ const appLogger = debug('frontend');
 try {
   mongoose.set('strictQuery', false); // if true only the fields that are specified in the Schema will be saved
   await mongoose.connect(
-    `${process.env.MONGODB_CONN_STRING}${DB}?retryWrites=true&w=majority`
+    `${process.env.MONGODB_CONN_STRING}${DB}?retryWrites=true&w=majority&appName=Cluster0`
   );
   appLogger('🌎 Connection to AdapterDb Succesfull! 🌎');
   appInsightsClient.trackEvent({
@@ -19,7 +19,7 @@ try {
     properties: { backend: hostName, pid: process.pid },
   });
 } catch (error) {
-  handler.handleError(error);
+  handler.handleError(error, { originalUrl: ' Connection to AdapterDb' });
   process.exit(0);
 }
 
