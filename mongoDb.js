@@ -38,7 +38,7 @@ defaultConnection.on('error', err => {
 defaultConnection.on('disconnected', () => {
   appLogger(`🌞 Disconnected from AdapterDb`);
   appInsightsClient.trackEvent({
-    name: `🌞 Disconnected from MainDb`,
+    name: `🌞 Disconnected from AdapterDb`,
     properties: {
       frontEnd: hostName,
       pid: process.pid,

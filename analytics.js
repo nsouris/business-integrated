@@ -16,3 +16,6 @@ appInsights
   .start();
 
 export default appInsights.defaultClient;
+
+// const deactivate = { trackEvent: () => {}, trackException: () => {} };
+// export default deactivate;
