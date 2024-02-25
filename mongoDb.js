@@ -13,9 +13,9 @@ try {
   await mongoose.connect(
     `${process.env.MONGODB_CONN_STRING}${DB}?retryWrites=true&w=majority&appName=Cluster0`
   );
-  appLogger('🌎 Connection to AdapterDb Succesfull! 🌎');
+  appLogger('🌎 Connection to AdapterDb Succesful! 🌎');
   appInsightsClient.trackEvent({
-    name: '🌎 Connection to AdapterDb Succesfull! 🌎',
+    name: '🌎 Connection to AdapterDb Succesful! 🌎',
     properties: { backend: hostName, pid: process.pid },
   });
 } catch (error) {

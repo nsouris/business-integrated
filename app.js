@@ -2,16 +2,17 @@ import axios from 'axios';
 import express from 'express';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import os from 'os';
+
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
-import os from 'os';
 import appInsightsClient from './analytics.js';
 import { appLogger } from './server.js';
 import { handler } from './errorHandler.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const backendUrl = 'https://BackendPrivateApi.azurewebsites.net';
+const backendUrl = process.env.BACKEND_URL;
 
 export const app = express();
 app.use(express.json());
@@ -56,8 +57,8 @@ app.set('trust proxy', true); // to get the req.ip
 app.disable('x-powered-by'); // for hiding being an express app
 
 app.use((req, _res, next) => {
-  appLogger('Requset method and url : ', req.method, req.url);
-  appLogger('Requset body:', req.body);
+  appLogger('Request method and url : ', req.method, req.url);
+  appLogger('Request body:', req.body);
   appLogger('Client ip:', req.ip);
   appLogger('hosstName', hostName);
   appLogger('id', pid);

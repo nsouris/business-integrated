@@ -14,7 +14,6 @@ appInsights
   .setSendLiveMetrics(false)
   .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
   .start();
-
 export default appInsights.defaultClient;
 
 // const deactivate = { trackEvent: () => {}, trackException: () => {} };

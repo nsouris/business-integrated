@@ -1,11 +1,10 @@
 import './analytics.js';
+import { createAdapter } from '@socket.io/mongo-adapter';
 import { Server } from 'socket.io';
 import debug from 'debug';
+import os from 'os';
 
 import { app } from './app.js';
-import './mongoDb.js';
-import { createAdapter } from '@socket.io/mongo-adapter';
-import os from 'os';
 import appInsightsClient from './analytics.js';
 import { adapterCollection } from './mongoDb.js';
 
@@ -21,7 +20,7 @@ export const server = app.listen(port, () => {
   }`;
   appLogger(info);
   appInsightsClient.trackEvent({
-    name: '👕' + 'FRONTEND SERVER STARTED',
+    name: '👕 FRONTEND SERVER STARTED',
     properties: { hostName, pid },
   });
 });
