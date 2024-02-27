@@ -13,15 +13,16 @@ app.set('port', port);
 export const appLogger = debug('frontend');
 const hostName = os.hostname();
 const pid = process.pid;
+const instanceId = process.env.WEBSITE_INSTANCE_ID;
 
 export const server = app.listen(port, () => {
-  const info = `🤙 Express on ${hostName}, pid: ${pid}, listening on port:${
+  const info = `🤙 Express on ${hostName}, pid: ${pid},instanceId: ${instanceId} listening on port:${
     server.address().port
   }`;
   appLogger(info);
   appInsightsClient.trackEvent({
     name: '👕 FRONTEND SERVER STARTED',
-    properties: { hostName, pid },
+    properties: { hostName, pid, instanceId },
   });
 });
 export const socketIoServer = new Server(server, {
