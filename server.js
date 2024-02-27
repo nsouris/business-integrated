@@ -53,7 +53,9 @@ function socketListen(socket) {
   );
 
   socket.on('disconnecting', async reason => {
-    appLogger(`🤙 disconnecting ${socket.id} due to :${reason}`);
+    appLogger(
+      `🤙 disconnecting ${socket.id} from ${hostName} : ${pid} due to :${reason}`
+    );
     appInsightsClient.trackEvent({
       name: `🤙 disconnecting socket`,
       properties: {
