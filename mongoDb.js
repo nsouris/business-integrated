@@ -16,7 +16,7 @@ try {
   appLogger('🌎 Connection to AdapterDb Succesful! 🌎');
   appInsightsClient.trackEvent({
     name: '🌎 Connection to AdapterDb Succesful! 🌎',
-    properties: { backend: hostName, pid: process.pid },
+    properties: { frontend: hostName, pid: process.pid },
   });
 } catch (error) {
   handler.handleError(error, { originalUrl: ' Connection to AdapterDb' });

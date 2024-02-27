@@ -70,14 +70,15 @@ app.patch('/', (req, res, next) => {
     setTimeout(() => {
       throw new Error('lets restart');
     }, 5000);
+
   next();
 });
 
 app.patch('/', async (req, res, next) => {
-  appInsightsClient.trackEvent({
-    name: `🌞🌞🌞frontend patch controler`,
-    properties: { frontend: '🔐' + hostName, pid, requestIp: req.ip },
-  });
+  // appInsightsClient.trackEvent({
+  //   name: `🌞🌞🌞frontend patch controler`,
+  //   properties: { frontend: '🔐' + hostName, pid, requestIp: req.ip },
+  // });
   try {
     if (req.body.msg === 'F') throw new Error('wtF!@!');
     if (req.body.roomId === 'cpuLoad') {
