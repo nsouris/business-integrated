@@ -6,7 +6,6 @@ import os from 'os';
 
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
-import appInsightsClient from './analytics.js';
 import { appLogger } from './server.js';
 import { handler } from './errorHandler.js';
 
@@ -22,7 +21,7 @@ const pid = process.pid;
 
 const HEADERS = {
   'Content-Security-Policy':
-    "default-src 'self' https://westeurope-5.in.applicationinsights.azure.com/v2/track;base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
+    "default-src 'self' https://westeurope-5.in.applicationinsights.azure.com/v2/track; base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests",
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Cross-Origin-Resource-Policy': 'same-origin',
   'Origin-Agent-Cluster': '?1',
