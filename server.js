@@ -38,19 +38,16 @@ socketIoServer.adapter(
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
   appLogger(
-    `socket connected with id: ${socket.id} connected to  PID: ${pid} `
+    `socket connected with id: ${socket.id} connected to  host: ${hostName} `
   );
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
     properties: {
+      hostName,
       socketId: socket.id,
-      pid: pid,
     },
   });
-
-  socket.on('postMessage', ({ gameId, playerName, message }) =>
-    socketIoServer.in(gameId).emit('newMessage', { playerName, message })
-  );
+  socket.emit('ConnInfo', hostName, socket.id);
 
   socket.on('disconnecting', async reason => {
     appLogger(
@@ -60,7 +57,8 @@ function socketListen(socket) {
       name: `🤙 disconnecting socket`,
       properties: {
         socketId: socket.id,
-        pid: pid,
+        hostName,
+        pid,
         reason,
       },
     });
