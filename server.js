@@ -45,6 +45,7 @@ function socketListen(socket) {
     properties: {
       hostName,
       socketId: socket.id,
+      ip: socket.handshake.address,
     },
   });
   socket.emit('ConnInfo', hostName, socket.id);
