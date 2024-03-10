@@ -37,22 +37,10 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
-  const ipAddress = socket.request.connection.remoteAddress;
+  const ipAddress = socket.client.request.headers['x-forwarded-for'];
   appLogger(
     `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
-  appLogger(1, socket.client.request.headers['x-forwarded-for']);
-  appLogger(2, socket.handshake.address.address);
-  appLogger(3, socket.handshake.headers('x-forwarded-for'));
-  appLogger(4, socket.handshake.headers['x-real-ip']);
-  appLogger(socket.handshake);
-  function parseHeader(header) {
-    for (const directive of header.split(',')[0].split(';')) {
-      if (directive.startsWith('for=')) {
-        return directive.substring(4);
-      }
-    }
-  }
 
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
