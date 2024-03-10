@@ -1,33 +1,39 @@
-import appInsightsClient from './analytics.js';
+/* eslint-disable no-unused-vars */
 import debug from 'debug';
 import os from 'os';
+
+import appInsightsClient from './analytics.js';
 
 export const hostName = os.hostname();
 export const pid = process.pid;
 const appLogger = debug('frontend');
 
-export class AppError extends Error {
-  constructor(message, isOperational) {
-    super();
-    this.message = message;
-    this.isOperational = isOperational;
-  }
-}
 class ErrorHandler {
   constructor() {
-    this.handleError = async (error, req = {}, res = {}) => {
-      appLogger(`🌞 ${req.originalUrl} error`, error.message);
+    this.handle = async (error, data, logInfo = '') => {
+      appLogger(`🌞 ${logInfo}:`, error.message || '');
       appInsightsClient.trackException({
         exception: error,
-        properties: {
-          body: req.body,
-          frontEnd: hostName,
-          pid,
-        },
+        properties: { frontEnd: hostName, pid, data, stack: error.stack },
       });
-      if (res.locals) res.status(500).send(error.message);
+      if (!isNaN(data?.isCritical)) {
+        appLogger('🛑 critical error occured');
+        appInsightsClient.flush();
+        setTimeout(() => process.exit(data.isCritical), 1000);
+      }
+    };
+
+    this.middleware = async (error, req, res, _next) => {
+      appLogger(`🌞 ${req.originalUrl}:`, error.message);
+      if (!error.cause)
+        appInsightsClient.trackException({
+          exception: error,
+          properties: { frontEnd: hostName, pid, stack: error.stack },
+        });
+
+      res.status(500).send(error.message);
     };
   }
 }
 
-export const handler = new ErrorHandler();
+export const errorHandler = new ErrorHandler();

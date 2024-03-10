@@ -7,22 +7,22 @@ import os from 'os';
 import { app } from './app.js';
 import appInsightsClient from './analytics.js';
 import { adapterCollection } from './mongoDb.js';
+import { errorHandler } from './errorHandler.js';
 
 const port = normalizePort(process.env.PORT || '3101');
 app.set('port', port);
 export const appLogger = debug('frontend');
 const hostName = os.hostname();
 const pid = process.pid;
-const instanceId = process.env.WEBSITE_INSTANCE_ID;
 
 export const server = app.listen(port, () => {
-  const info = `🤙 Express on ${hostName}, pid: ${pid},instanceId: ${instanceId} listening on port:${
+  const info = `🤙 Express on ${hostName}, pid: ${pid}, listening on port:${
     server.address().port
   }`;
   appLogger(info);
   appInsightsClient.trackEvent({
     name: '👕 FRONTEND SERVER STARTED',
-    properties: { hostName, pid, instanceId },
+    properties: { hostName, pid },
   });
 });
 export const socketIoServer = new Server(server, {
@@ -55,7 +55,7 @@ function socketListen(socket) {
       `🤙 disconnecting ${socket.id} from ${hostName} : ${pid} due to :${reason}`
     );
     appInsightsClient.trackEvent({
-      name: `🤙 disconnecting socket`,
+      name: `Disconnecting socket`,
       properties: {
         socketId: socket.id,
         hostName,
@@ -69,53 +69,44 @@ function socketListen(socket) {
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
+process.on('uncaughtException', function uncaughtExceptionHandler(error) {
+  errorHandler.handle(error, { isCritical: 1 }, 'process uncaughtException');
+});
+
+process.on('unhandledRejection', function unhandledRejectionHandler(reason) {
+  const error = Error(reason);
+  errorHandler.handle(error, { isCritical: 1 }, 'process unhandledRejection');
+});
+
 function normalizePort(val) {
   const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
   return false;
 }
-/**
- * Event listener for HTTP server "error" event.
- */
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
-
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
+    case 'EACCES': {
+      const error = Error(bind + ' requires elevated privileges');
+      errorHandler.handle(error, { isCritical: 1 });
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
+    }
+    case 'EADDRINUSE': {
+      const error = Error(bind + ' is already in use');
+      errorHandler.handle(error, { isCritical: 1 });
       break;
+    }
     default:
       throw error;
   }
 }
-/**
- * Event listener for HTTP server "listening" event.
- */
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  appLogger('Listening on ' + bind);
 }

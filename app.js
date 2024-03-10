@@ -7,17 +7,15 @@ import os from 'os';
 import { filterIpAddresses } from './middleware/filterIpAddresses.js';
 import { requestWebhookKey } from './middleware/requestWebhookKey.js';
 import { appLogger } from './server.js';
-import { handler } from './errorHandler.js';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { errorHandler } from './errorHandler.js';
 
 const backendUrl = process.env.BACKEND_URL;
-
-export const app = express();
-app.use(express.json());
-
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const hostName = os.hostname();
 const pid = process.pid;
+
+export const app = express();
+app.use(express.json({ limit: '5kb' }));
 
 const HEADERS = {
   'Content-Security-Policy':
@@ -33,27 +31,19 @@ const HEADERS = {
   'X-Frame-Options': 'SAMEORIGIN',
   'X-Permitted-Cross-Domain-Policies': 'none',
   'X-XSS-Protection': '0',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers':
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH,  OPTIONS',
+  'Access-Control-Expose-Headers': '*',
 };
 app.use((_req, res, next) => {
   res.set(HEADERS);
   next();
 });
-app.use((_req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET, POST, PUT, PATCH, OPTIONS'
-  );
-  res.setHeader('Access-Control-Expose-Headers', '*');
-  next();
-});
-
+app.disable('x-powered-by'); // for hiding being an express
+app.set('etag', false); // for avoiding 304 not changed response
 app.set('trust proxy', true); // to get the req.ip
-app.disable('x-powered-by'); // for hiding being an express app
 
 app.use((req, _res, next) => {
   appLogger('Request method and url : ', req.method, req.url);
@@ -136,10 +126,8 @@ app.use(express.static(path.join(__dirname, 'build')));
 app.use((_req, res) => {
   res.sendFile(path.join(__dirname, './build', 'index.html'));
 });
-// eslint-disable-next-line no-unused-vars
-app.use(async (err, req, res, next, _next) => {
-  await handler.handleError(err, req, res, next);
-});
+
+app.use(errorHandler.middleware);
 
 function mySlowFunction(baseNumber) {
   console.time('mySlowFunction');
