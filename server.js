@@ -37,15 +37,25 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
+  const ipAddress = parseHeader(socket.handshake.headers['forwarded'] || '');
   appLogger(
-    `socket connected with id: ${socket.id} connected to  host: ${hostName} `
+    `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
+
+  function parseHeader(header) {
+    for (const directive of header.split(',')[0].split(';')) {
+      if (directive.startsWith('for=')) {
+        return directive.substring(4);
+      }
+    }
+  }
+
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
     properties: {
       hostName,
       socketId: socket.id,
-      ip: socket.handshake.address,
+      ip: ipAddress,
     },
   });
   socket.emit('ConnInfo', hostName, socket.id);
