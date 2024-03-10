@@ -37,7 +37,7 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
-  const ipAddress = parseHeader(socket.handshake.headers['forwarded'] || '');
+  const ipAddress = socket.request.connection.remoteAddress;
   appLogger(
     `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
