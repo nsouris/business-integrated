@@ -42,8 +42,7 @@ function socketListen(socket) {
   appLogger(
     `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
-  const secIp = socket.handshake.headers['forwarded'];
-  appLogger(secIp);
+
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
     properties: {
