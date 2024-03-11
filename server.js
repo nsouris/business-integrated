@@ -37,11 +37,13 @@ socketIoServer.adapter(
 
 socketIoServer.on('connection', socketListen);
 function socketListen(socket) {
-  const ipAddress = socket.client.request.headers['x-forwarded-for'];
+  const ipAddress =
+    socket.client.request.headers['x-forwarded-for']?.split(':')[0];
   appLogger(
     `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
-
+  const secIp = socket.handshake.headers['forwarded'];
+  appLogger(secIp);
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
     properties: {
