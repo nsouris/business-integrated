@@ -2,6 +2,7 @@ import './analytics.js';
 import { createAdapter } from '@socket.io/mongo-adapter';
 import { Server } from 'socket.io';
 import debug from 'debug';
+import mongoose from 'mongoose';
 import os from 'os';
 
 import { app } from './app.js';
@@ -42,7 +43,6 @@ function socketListen(socket) {
   appLogger(
     `socket connected with id: ${socket.id} & ip: ${ipAddress} connected to  host: ${hostName} `
   );
-
   appInsightsClient.trackEvent({
     name: `🤙 Socket connected`,
     properties: {
@@ -80,6 +80,32 @@ process.on('unhandledRejection', function unhandledRejectionHandler(reason) {
   const error = Error(reason);
   errorHandler.handle(error, { isCritical: 1 }, 'process unhandledRejection');
 });
+
+process.on('SIGINT', gracefulExit);
+process.on('SIGTERM', gracefulExit);
+
+async function gracefulExit() {
+  server.close(async function onServerClosed(error) {
+    appInsightsClient.trackEvent({
+      name: '🌎GracefulExit🌎',
+      properties: { frontend: hostName, pid: process.pid },
+    });
+    appLogger('GracefulExit');
+    if (error) {
+      errorHandler.handle(error, { isCritical: 1 }, 'error on server close');
+      process.exit(1);
+    }
+    await mongoose.disconnect();
+    socketIoServer.close(() => {
+      appInsightsClient.trackEvent({
+        name: '🌎Closing socket server🌎',
+        properties: { frontend: hostName, pid: process.pid },
+      });
+      appLogger('Closing socket server');
+      process.exit(0);
+    });
+  });
+}
 
 function normalizePort(val) {
   const port = parseInt(val, 10);
