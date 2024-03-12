@@ -85,25 +85,19 @@ process.on('SIGINT', gracefulExit);
 process.on('SIGTERM', gracefulExit);
 
 async function gracefulExit() {
-  server.close(async function onServerClosed(error) {
+  appInsightsClient.trackEvent({
+    name: '🌎GracefulExit🌎',
+    properties: { frontend: hostName, pid: process.pid },
+  });
+  appLogger('GracefulExit');
+  await mongoose.disconnect();
+  socketIoServer.close(() => {
     appInsightsClient.trackEvent({
-      name: '🌎GracefulExit🌎',
+      name: '🌎Closing socket server🌎',
       properties: { frontend: hostName, pid: process.pid },
     });
-    appLogger('GracefulExit');
-    if (error) {
-      errorHandler.handle(error, { isCritical: 1 }, 'error on server close');
-      process.exit(1);
-    }
-    await mongoose.disconnect();
-    socketIoServer.close(() => {
-      appInsightsClient.trackEvent({
-        name: '🌎Closing socket server🌎',
-        properties: { frontend: hostName, pid: process.pid },
-      });
-      appLogger('Closing socket server');
-      process.exit(0);
-    });
+    appLogger('Closing socket server');
+    process.exit(0);
   });
 }
 
